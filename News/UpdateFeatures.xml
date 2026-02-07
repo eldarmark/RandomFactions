@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-	<HugsLib.UpdateFeatureDef Abstract="true" Name="RandomFactions_UpdateFeatureBase">
-		<modNameReadable>RandomFactions</modNameReadable>
-		<linkUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3402848147</linkUrl>
-	</HugsLib.UpdateFeatureDef>
-	<HugsLib.UpdateFeatureDef ParentName="RandomFactions_UpdateFeatureBase">
-		<defName>RandomFactions_1_6_1</defName>
-		<assemblyVersion>1.6.1</assemblyVersion>
-		<content>This update of the mod removes the need for HugsLib, thanks to Zaljerem!</content>
-	</HugsLib.UpdateFeatureDef>
+  <HugsLib.UpdateFeatureDef Abstract="true" Name="RandomFactions_UpdateFeatureBase">
+    <modNameReadable>RandomFactions</modNameReadable>
+    <linkUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3402848147</linkUrl>
+  </HugsLib.UpdateFeatureDef>
+  <HugsLib.UpdateFeatureDef ParentName="RandomFactions_UpdateFeatureBase">
+    <defName>RandomFactions_1_6_1</defName>
+    <assemblyVersion>1.6.1</assemblyVersion>
+    <content>This update of the mod removes the need for HugsLib, thanks to Zaljerem!</content>
+  </HugsLib.UpdateFeatureDef>
 </Defs>
-

@@ -1,5 +1,8 @@
 # Changelog for RandomFactions
 
+1.6.3 - Dont replace baseliners with baseliners, thanks to ArthurGC
+
+
 1.6.2 - Removed HugsLib prereq
 Added verbose logging
 Fixed xenotypes and some other bug-fixes

@@ -1,9 +1,9 @@
-﻿using Mlie;
-using RimWorld;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Mlie;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -12,48 +12,49 @@ namespace RandomFactions;
 public class RandomFactionsMod : Mod
 {
     public const string RandomCategoryName = "Random";
-    public const string XenopatchCategoryName = "Xenopatch";
+    private const string XenopatchCategoryName = "Xenopatch";
 
     // exclude specific xenotypes from specific FactionDefs
     private static readonly Dictionary<string, HashSet<string>> BlockedPairs = new()
     {
-        { "OutlanderRough", new HashSet<string> { "Pigskin" } },
-        { "OutlanderCivil", new HashSet<string> { "Papago", "Hunterphage" } },
-        { "Pirate", new HashSet<string> { "Waster", "Yttakin" } },
-        { "TribeSavage", new HashSet<string> { "Impid", "Starjack" } },
-        { "TribeRough", new HashSet<string> { "Neanderthal", "Starjack" } },
-        { "TribeCivil", new HashSet<string> { "Starjack" } },
-        { "TribeCannibal", new HashSet<string> { "Starjack" } },
-        { "NudistTribe", new HashSet<string> { "Starjack" } }
+        { "OutlanderRough", ["Pigskin"] },
+        { "OutlanderCivil", ["Papago", "Hunterphage"] },
+        { "Pirate", ["Waster", "Yttakin"] },
+        { "TribeSavage", ["Impid", "Starjack"] },
+        { "TribeRough", ["Neanderthal", "Starjack"] },
+        { "TribeCivil", ["Starjack"] },
+        { "TribeCannibal", ["Starjack"] },
+        { "NudistTribe", ["Starjack"] }
     };
+
     private static string currentVersion;
 
     private static readonly Dictionary<(string baseFactionDefName, string xenotype), string> XenotypeFactionOverrides =
- new()
-    {
-        { ("TribeRough",      "Neanderthal"), "TribeRoughNeanderthal" },
-        { ("Pirate",          "Yttakin"), "PirateYttakin" },
-        { ("TribeSavage",     "Impid"), "TribeSavageImpid" },
-        { ("OutlanderRough",  "Pigskin"), "OutlanderRoughPig" },
-        { ("PirateRough",     "Waster"), "PirateWaster" },
-        { ("Sanguophage",     "Sanguophage"), "Sanguophages" },
-        { ("OutlanderCivil",  "Papago"), "OutlanderPapou" },
-        { ("OutlanderCivil",  "Hunterphage"), "HuntersCovenant" },
-    };
+        new()
+        {
+            { ("TribeRough", "Neanderthal"), "TribeRoughNeanderthal" },
+            { ("Pirate", "Yttakin"), "PirateYttakin" },
+            { ("TribeSavage", "Impid"), "TribeSavageImpid" },
+            { ("OutlanderRough", "Pigskin"), "OutlanderRoughPig" },
+            { ("PirateRough", "Waster"), "PirateWaster" },
+            { ("Sanguophage", "Sanguophage"), "Sanguophages" },
+            { ("OutlanderCivil", "Papago"), "OutlanderPapou" },
+            { ("OutlanderCivil", "Hunterphage"), "HuntersCovenant" }
+        };
 
     // Xenotype faction creation - now with filtering
     // Easy to extend to allow mod options to blacklist, etc.
 
     // Xenotypes that should NEVER be used to create new xenotype factions
-    public static readonly HashSet<string> GloballyBlockedXenotypes = new()
-    {
+    public static readonly HashSet<string> GloballyBlockedXenotypes =
+    [
         "Baseliner", // handled by the base Defs
         "Highmate"
-    };
+    ];
 
     // don't make xenotype factions with these, leads to nonsensical "waster savage impid tribe", etc.
-    public static readonly HashSet<string> HardExcludedFactionDefs = new()
-    {
+    public static readonly HashSet<string> HardExcludedFactionDefs =
+    [
         "TribeRoughNeanderthal",
         "PirateYttakin",
         "TribeSavageImpid",
@@ -65,23 +66,20 @@ public class RandomFactionsMod : Mod
         //modded regular faction
         "EVA_Faction",
         //modded xenotype faction (this is really going to need to become a mod option)
-        "HuntersCovenant",// Hunterphage
-        "OutlanderPapou" // Papou
-    };
-
-    public static RandomFactionsMod Instance;
+        "HuntersCovenant", // Hunterphage
+        "OutlanderPapou"
+    ];
 
     public static RandomFactionsSettings SettingsInstance;
-    private readonly Dictionary<FactionDef, int> randCountRecord = new();
-    private readonly Dictionary<FactionDef, int> zeroCountRecord = new();
 
     public readonly ModLogger Logger;
 
-    public readonly Dictionary<string, FactionDef> patchedXenotypeFactions = new();
+    private readonly Dictionary<string, FactionDef> patchedXenotypeFactions = new();
+    private readonly Dictionary<FactionDef, int> randCountRecord = new();
+    private readonly Dictionary<FactionDef, int> zeroCountRecord = new();
 
     public RandomFactionsMod(ModContentPack content) : base(content)
     {
-        Instance = this;
         currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
         Logger = new ModLogger("RandomFactionsMod");
         SettingsInstance = GetSettings<RandomFactionsSettings>();
@@ -166,7 +164,7 @@ public class RandomFactionsMod : Mod
                 Logger.Trace($" - Applying xenotype: {xenotypeDef.defName}");
 
                 // *** NEW LOGIC: Determine final defName before cloning ***
-                string newName = XenoFactionDefName(xenotypeDef, def);
+                var newName = XenoFactionDefName(xenotypeDef, def);
 
                 // null means: override exists → skip generation
                 if (newName == null)
@@ -195,13 +193,15 @@ public class RandomFactionsMod : Mod
                 var newXenoSet = new XenotypeSet();
 
                 foreach (var field in typeof(XenotypeSet).GetFields(
-                    BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public))
+                             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public))
                 {
-                    if (field.FieldType.IsAssignableFrom(xenotypeChances.GetType()))
+                    if (!field.FieldType.IsAssignableFrom(xenotypeChances.GetType()))
                     {
-                        field.SetValue(newXenoSet, xenotypeChances);
-                        Logger.Trace($"   - Set XenotypeSet field '{field.Name}' for {defCopy.defName}");
+                        continue;
                     }
+
+                    field.SetValue(newXenoSet, xenotypeChances);
+                    Logger.Trace($"   - Set XenotypeSet field '{field.Name}' for {defCopy.defName}");
                 }
 
                 defCopy.xenotypeSet = newXenoSet;
@@ -245,28 +245,34 @@ public class RandomFactionsMod : Mod
     private static List<XenotypeDef> getViolenceCapableXenotypes()
     {
         return DefDatabase<XenotypeDef>.AllDefs
-            .Where(
-                x =>
+            .Where(x =>
+            {
+                //To prevent replacing baseliners with baseliners
+                if (x == XenotypeDefOf.Baseliner)
                 {
-                    if (x.genes == null)
-                    {
-                        return true;
-                    }
+                    return false;
+                }
 
-                    var combinedDisabled = WorkTags.None;
-                    foreach (var gene in x.genes)
-                    {
-                        combinedDisabled |= gene.disabledWorkTags;
-                    }
+                if (x.genes == null)
+                {
+                    return true;
+                }
 
-                    return (combinedDisabled & WorkTags.Violent) == 0;
-                })
+                var combinedDisabled = WorkTags.None;
+                foreach (var gene in x.genes)
+                {
+                    combinedDisabled |= gene.disabledWorkTags;
+                }
+
+                return (combinedDisabled & WorkTags.Violent) == 0;
+            })
             .ToList();
     }
 
     private static void reflectionCopy(object a, object b)
     {
-        foreach (var field in a.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+        foreach (var field in a.GetType()
+                     .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
         {
             field.SetValue(b, field.GetValue(a));
         }
@@ -293,11 +299,13 @@ public class RandomFactionsMod : Mod
 
         foreach (var def in DefDatabase<FactionDef>.AllDefs)
         {
-            if (RandomCategoryName.EqualsIgnoreCase(def.categoryTag))
+            if (!RandomCategoryName.EqualsIgnoreCase(def.categoryTag))
             {
-                randCountRecord[def] = def.startingCountAtWorldCreation;
-                def.startingCountAtWorldCreation = 0;
+                continue;
             }
+
+            randCountRecord[def] = def.startingCountAtWorldCreation;
+            def.startingCountAtWorldCreation = 0;
         }
     }
 
@@ -325,7 +333,7 @@ public class RandomFactionsMod : Mod
 
     public override void DoSettingsWindowContents(Rect inRect)
     {
-        Listing_Standard listing = new Listing_Standard();
+        var listing = new Listing_Standard();
         listing.Begin(inRect);
 
         listing.CheckboxLabeled(
@@ -353,6 +361,7 @@ public class RandomFactionsMod : Mod
             listing.Label("RaFa.currentModVersion".Translate(currentVersion));
             GUI.contentColor = Color.white;
         }
+
         listing.End();
 
         base.DoSettingsWindowContents(inRect);
@@ -373,16 +382,14 @@ public class RandomFactionsMod : Mod
         }
 
         // Don’t patch factions already generated by this mod
-        if (RandomCategoryName.EqualsIgnoreCase(def.categoryTag))
-        {
-            return false;
-        }
-
+        return !RandomCategoryName.EqualsIgnoreCase(def.categoryTag);
         // Otherwise OK
-        return true;
     }
 
-    public override string SettingsCategory() { return "RaFa.ModName".Translate(); }
+    public override string SettingsCategory()
+    {
+        return "RaFa.ModName".Translate();
+    }
 
     public override void WriteSettings()
     {
@@ -402,23 +409,22 @@ public class RandomFactionsMod : Mod
             throw new ArgumentNullException(nameof(fdef));
         }
 
-        string xenotype = xdef.defName;
-        string baseKey = BaseFactionKey(fdef);
+        var xenotype = xdef.defName;
+        var baseKey = BaseFactionKey(fdef);
 
         // Check for override-based canonical factions
-        if (XenotypeFactionOverrides.TryGetValue((baseKey, xenotype), out string mapped))
+        if (!XenotypeFactionOverrides.TryGetValue((baseKey, xenotype), out var mapped))
         {
-            // If the mapped def exists already — DO NOT CREATE A DUPLICATE
-            if (DefDatabase<FactionDef>.GetNamedSilentFail(mapped) != null)
-            {
-                // Signal caller: "skip creation"
-                return null;
-            }
-
-            return mapped;
+            return $"{xenotype}_{fdef.defName}";
         }
 
+        // If the mapped def exists already — DO NOT CREATE A DUPLICATE
+        return DefDatabase<FactionDef>.GetNamedSilentFail(mapped) != null
+            ?
+            // Signal caller: "skip creation"
+            null
+            : mapped;
+
         // Default generated name
-        return $"{xenotype}_{fdef.defName}";
     }
 }

@@ -36,6 +36,7 @@
 Update of Dr. Plantabytes mod https://steamcommunity.com/sharedfiles/filedetails/?id=2896649114
 
 - Added translation support
+- As of 1.6 the mod no longer needs HugsLib, thanks to Zaljerem!
 
 [img]https://img.litet.net/logos/Notice.png[/img]
 
@@ -134,6 +135,6 @@ Random Factions Rimworld Mod is licensed under the Attribution 4.0 International
 [*] Use [url=https://github.com/RimSort/RimSort/releases/latest]RimSort[/url] to sort your mods
 [/list] 
 
-[url=https://steamcommunity.com/sharedfiles/filedetails/changelog/3402848147][img]https://img.shields.io/github/v/release/emipa606/RandomFactions?label=latest%20version&amp;style=plastic&amp;color=9f1111&amp;labelColor=black[/img][/url] | tags:  unique</description>
-  <modVersion IgnoreIfNoMatchingField="True">1.6.2</modVersion>
+[url=https://steamcommunity.com/sharedfiles/filedetails/changelog/3402848147][img]https://img.shields.io/github/v/release/emipa606/RandomFactions?label=latest%20version&amp;style=plastic&amp;color=9f1111&amp;labelColor=black[/img][/url] | tags: unique</description>
+  <modVersion IgnoreIfNoMatchingField="True">1.6.3</modVersion>
 </ModMetaData>

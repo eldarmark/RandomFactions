@@ -1,6 +1,7 @@
-﻿using RimWorld;
-using RimWorld.Planet;
+﻿using System;
 using System.Linq;
+using RimWorld;
+using RimWorld.Planet;
 using Verse;
 
 namespace RandomFactions;
@@ -9,18 +10,23 @@ public class RandomFactionsWorldComponent : WorldComponent
 {
     private bool initialized;
 
-    public RandomFactionsWorldComponent(World world) : base(world) { initialized = false; }
-
-    public override void ExposeData() { base.ExposeData(); }
+    public RandomFactionsWorldComponent(World world) : base(world)
+    {
+        initialized = false;
+    }
 
     public override void WorldComponentTick()
     {
         if (initialized)
+        {
             return;
+        }
 
         // Make sure the world exists
         if (Find.World == null)
+        {
             return;
+        }
 
         initialized = true;
 
@@ -38,7 +44,7 @@ public class RandomFactionsWorldComponent : WorldComponent
 
         // Prepare faction generator
         var allDefs = DefDatabase<FactionDef>.AllDefs;
-        string[] offBooks = new string[0]; // replace with your off-books if needed
+        var offBooks = Array.Empty<string>(); // replace with your off-books if needed
         var generator = new RandomFactionGenerator(
             settings.xenoPercent,
             allDefs,
