@@ -242,6 +242,7 @@ public class RandomFactionsMod : Mod
         }
 
         // Apply faction count settings
+        // The XML defines them as 4 / 2 / 2 / 1 (Any / Civil / Rough / Pirate), this allows user changable Faction counts in settings.
         applyFactionCountSettings();
 
         Logger.Trace("DefsLoaded complete");
