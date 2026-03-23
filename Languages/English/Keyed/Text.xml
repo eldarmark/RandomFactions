@@ -16,6 +16,6 @@
   <RaFa.randomTradeFactionCountTT>Number of random civil factions to generate at world generation (default: 2).</RaFa.randomTradeFactionCountTT>  
   <RaFa.randomRoughFactionCount>Random Rough Factions Count</RaFa.randomRoughFactionCount>
   <RaFa.randomRoughFactionCountTT>Number of random rough factions to generate at world generation (default: 2).</RaFa.randomRoughFactionCountTT>
-  <RaFa.randomPirateFactionCount>Random Pirate Factions Count</RaFa.randomPirateFactionCount>
-  <RaFa.randomPirateFactionCountTT>Number of random pirate factions to generate at world generation (default: 1).</RaFa.randomPirateFactionCountTT>
+  <RaFa.randomPirateFactionCount>Random Hostile Factions Count</RaFa.randomPirateFactionCount>
+  <RaFa.randomPirateFactionCountTT>Number of random always hostile factions to generate at world generation (default: 1).</RaFa.randomPirateFactionCountTT>
 </LanguageData>
