@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -69,6 +69,9 @@ public class RandomFactionsMod : Mod
         "HuntersCovenant", // Hunterphage
         "OutlanderPapou"
     ];
+
+    // don't disable these factions by default, as they are used in various DLC quests and scenarios, disabling breaks functionality
+    private static readonly HashSet<string> NotZeroedFactionDefs = new(StringComparer.OrdinalIgnoreCase) { "Empire", "Insect", "TradersGuild" };
 
     public static RandomFactionsSettings SettingsInstance;
 
@@ -313,10 +316,7 @@ public class RandomFactionsMod : Mod
     {
         foreach (var def in DefDatabase<FactionDef>.AllDefs)
         {
-            if (def.hidden ||
-                def.isPlayer ||
-                RandomCategoryName.EqualsIgnoreCase(def.categoryTag) ||
-                "Empire".EqualsIgnoreCase(def.defName))
+            if (def.hidden || def.isPlayer || RandomCategoryName.EqualsIgnoreCase(def.categoryTag) || NotZeroedFactionDefs.Contains(def.defName))
             {
                 continue;
             }
