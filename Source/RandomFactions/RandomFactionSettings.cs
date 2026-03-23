@@ -15,5 +15,9 @@ public class RandomFactionsSettings : ModSettings
         Scribe_Values.Look(ref allowDuplicates, "allowDuplicates");
         Scribe_Values.Look(ref xenoPercent, "xenoPercent", 15);
         Scribe_Values.Look(ref verboseLogging, "verboseLogging");
+        Scribe_Values.Look(ref randomFactionCount, "randomFactionCount", 4);
+        Scribe_Values.Look(ref randomTradeFactionCount, "randomTradeFactionCount", 2);
+        Scribe_Values.Look(ref randomRoughFactionCount, "randomRoughFactionCount", 2);
+        Scribe_Values.Look(ref randomPirateFactionCount, "randomPirateFactionCount", 1);
     }
 }
